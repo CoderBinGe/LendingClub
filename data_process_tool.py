@@ -41,3 +41,25 @@ def analyze_data(data):
     plt.tight_layout()
     plt.savefig('./output/group_by_month_df.svg')
     plt.show()
+
+    # 3. 按地区（州）统计借贷金额总量
+    group_by_state = used_data.groupby(by='addr_state')['loan_amnt'].sum()
+    # print(group_by_state)
+
+    # 可视化
+    group_by_state.plot(kind='bar')
+    plt.xlabel('州')
+    plt.ylabel('借贷总量')
+    plt.title('州 vs 借贷总量')
+    plt.tight_layout()
+    plt.savefig('./output/group_by_state.png')
+    plt.show()
+
+    # 4、借贷评级、期限和利率的关系
+    group_by_grade_term = used_data.groupby(['grade', 'term'])['int_rate'].mean()
+    group_by_grade_term_df = pd.DataFrame(group_by_grade_term).reset_index()
+    print(group_by_grade_term_df.head())
+    group_by_grade_term_df.to_csv('./output/group_by_grade_term_df.csv', index=False)
+    # 转换为透视表
+    group_by_grade_term_pivot = group_by_grade_term_df.pivot(index='grade', columns='term', values='int_rate')
+    group_by_grade_term_pivot.to_csv('./output/group_by_grade_term_pivot.csv')
